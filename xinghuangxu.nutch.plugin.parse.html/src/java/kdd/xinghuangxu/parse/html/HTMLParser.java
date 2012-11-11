@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import kdd.xinghuangxu.parse.html.dataStruc.Content;
+import kdd.xinghuangxu.parse.html.dataStruc.HTMLMetaTags;
+import kdd.xinghuangxu.parse.html.dataStruc.Metadata;
+import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseResult;
+import kdd.xinghuangxu.parse.html.dataStruc.ParseStatus;
 
 
 import org.apache.nutch.util.EncodingDetector;
@@ -19,6 +23,9 @@ import org.xml.sax.SAXException;
 
 public class HTMLParser {
 	
+	private DOMContentUtils utils;
+
+	
 	  public ParseResult getParse(Content content) {
 		  
 		  
@@ -28,7 +35,7 @@ public class HTMLParser {
 		    try {
 		      base = new URL(content.getBaseUrl());
 		    } catch (MalformedURLException e) {
-		      return new ParseStatus(e).getEmptyParseResult(content.getUrl(), getConf());
+		      return new ParseStatus(e).getEmptyParseResult(content.getUrl());
 		    }
 
 		    String text = "";
@@ -67,13 +74,10 @@ public class HTMLParser {
 		      
 		    // get meta directives
 		    HTMLMetaProcessor.getMetaTags(metaTags, root, base);
-		    if (LOG.isTraceEnabled()) {
-		      LOG.trace("Meta tags for " + base + ": " + metaTags.toString());
-		    }
+		   
 		    // check meta directives
 		    if (!metaTags.getNoIndex()) {               // okay to index
 		      StringBuffer sb = new StringBuffer();
-		      if (LOG.isTraceEnabled()) { LOG.trace("Getting text..."); }
 		      utils.getText(sb, root);          // extract text
 		      text = sb.toString();
 		      sb.setLength(0);
@@ -117,8 +121,7 @@ public class HTMLParser {
 		    }
 		    return filteredParse;
 		     */
-		   
-		   
+
 		  }
 	
 

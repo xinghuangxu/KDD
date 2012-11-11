@@ -8,7 +8,6 @@ import java.io.IOException;
 import org.apache.hadoop.io.VersionMismatchException;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
-import org.apache.hadoop.conf.Configuration;
 
 
 
@@ -176,15 +175,15 @@ public class ParseStatus implements Writable {
   /** A convenience method. Creates an empty Parse instance,
    * which returns this status.
    */
-  public Parse getEmptyParse(Configuration conf) {
-    return new EmptyParseImpl(this, conf);
+  public Parse getEmptyParse() {
+    return new EmptyParseImpl(this);
   }
   
   /** A convenience method. Creates an empty ParseResult,
    * which contains this status.
    */
-  public ParseResult getEmptyParseResult(String url, Configuration conf) {
-    return ParseResult.createParseResult(url, getEmptyParse(conf));
+  public ParseResult getEmptyParseResult(String url) {
+    return ParseResult.createParseResult(url, getEmptyParse());
   }
   
   public String toString() {
@@ -250,7 +249,7 @@ public class ParseStatus implements Writable {
     
     private ParseData data = null;
     
-    public EmptyParseImpl(ParseStatus status, Configuration conf) {
+    public EmptyParseImpl(ParseStatus status) {
       data = new ParseData(status, "", new Outlink[0],
                            new Metadata(), new Metadata());
     }
