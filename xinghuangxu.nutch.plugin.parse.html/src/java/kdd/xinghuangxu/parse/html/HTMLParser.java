@@ -1,30 +1,72 @@
 package kdd.xinghuangxu.parse.html;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 
 import kdd.xinghuangxu.parse.html.dataStruc.Content;
 import kdd.xinghuangxu.parse.html.dataStruc.HTMLMetaTags;
 import kdd.xinghuangxu.parse.html.dataStruc.Metadata;
 import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
+import kdd.xinghuangxu.parse.html.dataStruc.Parse;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseData;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseImpl;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseResult;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseStatus;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.html.dom.HTMLDocumentImpl;
 import org.cyberneko.html.parsers.DOMFragmentParser;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.DocumentFragment;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class HTMLParser {
+	
+	 ///TODO Set Up Input parameter What parameter should I input?"
+	  public static void main(String[] args) throws Exception {
+		  
+//		  try{
+//			  //create file
+//			  FileWriter fstream=new FileWriter("out.txt");
+//			  BufferedWriter out=new BufferedWriter(fstream);
+//			  out.write("Hellow Java");
+//			  out.close();
+//		  }
+//		  catch(Exception e)
+//		  {
+//			  System.err.print("Error: "+e.getMessage());
+//		  }
+//		  
+		  
+	    //LOG.setLevel(Level.FINE);
+	    String url = args[0];
+	    byte[] bytes=HtmlSource.getUrlSourceBytes(url);
+	    //String url = "file:"+name;
+	    //File file = new File(name);
+	    //byte[] bytes = new byte[(int)file.length()];
+	    //DataInputStream in = new DataInputStream(new FileInputStream(file));
+	    //in.readFully(bytes);
+	    //Configuration conf = NutchConfiguration.create();
+	   // HtmlParser parser = new HtmlParser();
+	    //parser.setConf(conf);
+	    ParseResult parseResult=new HTMLParser().getParse(new Content(url,url,bytes,"text/html",new Metadata()));
+	    Parse parse=parseResult.get(url);
+	   // Parse parse = parser.getParse(
+	            //new Content(url, url, bytes, "text/html", new Metadata())).get(url);
+	    System.out.println("data: "+parse.getData());
+
+	    System.out.println("text: "+parse.getText());
+	    
+	  }
+	
 
 	private DOMContentUtils utils;
 
