@@ -53,11 +53,11 @@ public final class ParseData extends VersionedWritable {
   }
   
   public ParseData(ParseStatus status, String title, Outlink[] outlinks,
-                   Metadata contentMeta, Metadata parseMeta) {
+                    Metadata metadata, Metadata parseMeta) {
     this.status = status;
     this.title = title;
     this.outlinks = outlinks;
-    this.contentMeta = contentMeta;
+    this.contentMeta = metadata;
     this.parseMeta = parseMeta;
   }
 

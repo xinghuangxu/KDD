@@ -12,7 +12,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.UTF8;
 import org.apache.hadoop.io.VersionMismatchException;
 import org.apache.hadoop.io.Writable;
-import org.apache.nutch.metadata.Metadata;
 
 
 
