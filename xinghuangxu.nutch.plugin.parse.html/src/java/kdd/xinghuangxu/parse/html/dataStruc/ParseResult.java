@@ -1,7 +1,9 @@
 package kdd.xinghuangxu.parse.html.dataStruc;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.hadoop.io.Text;
 
@@ -18,6 +20,8 @@ import org.apache.hadoop.io.Text;
  * URLs (or sub-URLs).
  */
 public class ParseResult implements Iterable<Map.Entry<Text, Parse>> {
+	
+	//Text and ParseImpl
 	private Map<Text, Parse> parseMap;
 	private String originalUrl;
 
@@ -111,6 +115,8 @@ public class ParseResult implements Iterable<Map.Entry<Text, Parse>> {
 	 *            plain text result
 	 * @param data
 	 *            corresponding parse metadata of this result
+	 * 
+	 *
 	 */
 	public void put(String key, ParseText text, ParseData data) {
 		parseMap.put(new Text(key),
@@ -133,7 +139,7 @@ public class ParseResult implements Iterable<Map.Entry<Text, Parse>> {
 		for (Iterator<Entry<Text, Parse>> i = iterator(); i.hasNext();) {
 			Entry<Text, Parse> entry = i.next();
 			if (!entry.getValue().getData().getStatus().isSuccess()) {
-				LOG.warn(entry.getKey()
+				System.out.println(entry.getKey()
 						+ " is not parsed successfully, filtering");
 				i.remove();
 			}
