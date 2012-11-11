@@ -1,5 +1,14 @@
 package kdd.xinghuangxu.parse.html.dataStruc;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.VersionMismatchException;
+import org.apache.hadoop.io.VersionedWritable;
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -199,34 +208,34 @@ public final class ParseData extends VersionedWritable {
       return;
     }
 
-    Options opts = new Options();
-    Configuration conf = NutchConfiguration.create();
-    
-    GenericOptionsParser parser =
-      new GenericOptionsParser(conf, opts, argv);
-    
-    String[] remainingArgs = parser.getRemainingArgs();
-    FileSystem fs = FileSystem.get(conf);
-    
-    try {
-      int recno = Integer.parseInt(remainingArgs[0]);
-      String segment = remainingArgs[1];
-
-      Path file = new Path(segment, DIR_NAME);
-      System.out.println("Reading from file: " + file);
-
-      ArrayFile.Reader parses = new ArrayFile.Reader(fs, file.toString(), conf);
-
-      ParseData parseDatum = new ParseData();
-      parses.get(recno, parseDatum);
-
-      System.out.println("Retrieved " + recno + " from file " + file);
-      System.out.println(parseDatum);
-
-      parses.close();
-    } finally {
-      fs.close();
-    }
+//    Options opts = new Options();
+//    Configuration conf = NutchConfiguration.create();
+//    
+//    GenericOptionsParser parser =
+//      new GenericOptionsParser(conf, opts, argv);
+//    
+//    String[] remainingArgs = parser.getRemainingArgs();
+//    FileSystem fs = FileSystem.get(conf);
+//    
+//    try {
+//      int recno = Integer.parseInt(remainingArgs[0]);
+//      String segment = remainingArgs[1];
+//
+//      Path file = new Path(segment, DIR_NAME);
+//      System.out.println("Reading from file: " + file);
+//
+//      ArrayFile.Reader parses = new ArrayFile.Reader(fs, file.toString(), conf);
+//
+//      ParseData parseDatum = new ParseData();
+//      parses.get(recno, parseDatum);
+//
+//      System.out.println("Retrieved " + recno + " from file " + file);
+//      System.out.println(parseDatum);
+//
+//      parses.close();
+//    } finally {
+//      fs.close();
+//    }
   }
 
 }
