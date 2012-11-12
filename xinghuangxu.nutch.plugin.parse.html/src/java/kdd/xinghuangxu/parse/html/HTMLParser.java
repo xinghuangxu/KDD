@@ -10,6 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.text.html.HTMLWriter;
+
 import kdd.xinghuangxu.parse.html.dataStruc.Content;
 import kdd.xinghuangxu.parse.html.dataStruc.HTMLMetaTags;
 import kdd.xinghuangxu.parse.html.dataStruc.Metadata;
@@ -22,6 +24,7 @@ import kdd.xinghuangxu.parse.html.dataStruc.ParseStatus;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.Text;
 import org.apache.html.dom.HTMLDocumentImpl;
 import org.cyberneko.html.parsers.DOMFragmentParser;
 import org.w3c.dom.DocumentFragment;
@@ -29,6 +32,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class HTMLParser {
+	
+	public HTMLParser(){
+		setConf();
+	}
 	
 	 ///TODO Set Up Input parameter What parameter should I input?"
 	  public static void main(String[] args) throws Exception {
@@ -57,6 +64,7 @@ public class HTMLParser {
 	    //Configuration conf = NutchConfiguration.create();
 	   // HtmlParser parser = new HtmlParser();
 	    //parser.setConf(conf);
+	    //HTMLParser htmlParser=new HTMLParser();
 	    ParseResult parseResult=new HTMLParser().getParse(new Content(url,url,bytes,"text/html",new Metadata()));
 	    Parse parse=parseResult.get(url);
 	   // Parse parse = parser.getParse(
