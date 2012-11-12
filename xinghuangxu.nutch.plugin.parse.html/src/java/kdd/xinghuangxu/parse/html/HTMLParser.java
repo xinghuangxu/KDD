@@ -1,6 +1,5 @@
 package kdd.xinghuangxu.parse.html;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -32,53 +31,53 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class HTMLParser {
-	
-	public HTMLParser(){
+
+	public HTMLParser() {
 		setConf();
 	}
-	
-	 ///TODO Set Up Input parameter What parameter should I input?"
-	  public static void main(String[] args) throws Exception {
-		  
-//		  try{
-//			  //create file
-//			  FileWriter fstream=new FileWriter("out.txt");
-//			  BufferedWriter out=new BufferedWriter(fstream);
-//			  out.write("Hellow Java");
-//			  out.close();
-//		  }
-//		  catch(Exception e)
-//		  {
-//			  System.err.print("Error: "+e.getMessage());
-//		  }
-//		  
-		  
-	    //LOG.setLevel(Level.FINE);
-	    String url = args[0];
-	    byte[] bytes=HtmlSource.getUrlSourceBytes(url);
-	    //String url = "file:"+name;
-	    //File file = new File(name);
-	    //byte[] bytes = new byte[(int)file.length()];
-	    //DataInputStream in = new DataInputStream(new FileInputStream(file));
-	    //in.readFully(bytes);
-	    //Configuration conf = NutchConfiguration.create();
-	   // HtmlParser parser = new HtmlParser();
-	    //parser.setConf(conf);
-	    //HTMLParser htmlParser=new HTMLParser();
-	    ParseResult parseResult=new HTMLParser().getParse(new Content(url,url,bytes,"text/html",new Metadata()));
-	    Parse parse=parseResult.get(url);
-	   // Parse parse = parser.getParse(
-	            //new Content(url, url, bytes, "text/html", new Metadata())).get(url);
-	    System.out.println("data: "+parse.getData());
 
-	    System.out.println("text: "+parse.getText());
-	    
-	  }
-	
+	// /TODO Set Up Input parameter What parameter should I input?"
+	public static void main(String[] args) throws Exception {
+
+		// try{
+		// //create file
+		// FileWriter fstream=new FileWriter("out.txt");
+		// BufferedWriter out=new BufferedWriter(fstream);
+		// out.write("Hellow Java");
+		// out.close();
+		// }
+		// catch(Exception e)
+		// {
+		// System.err.print("Error: "+e.getMessage());
+		// }
+		//
+
+		// LOG.setLevel(Level.FINE);
+		String url = args[0];
+		byte[] bytes = HtmlSource.getUrlSourceBytes(url);
+		// String url = "file:"+name;
+		// File file = new File(name);
+		// byte[] bytes = new byte[(int)file.length()];
+		// DataInputStream in = new DataInputStream(new FileInputStream(file));
+		// in.readFully(bytes);
+		// Configuration conf = NutchConfiguration.create();
+		// HtmlParser parser = new HtmlParser();
+		// parser.setConf(conf);
+		// HTMLParser htmlParser=new HTMLParser();
+		Parse parse = new HTMLParser().getParse(new Content(url, url, bytes,
+				"text/html", new Metadata()));
+		// Parse parse=parseResult.get(url);
+		// Parse parse = parser.getParse(
+		// new Content(url, url, bytes, "text/html", new Metadata())).get(url);
+		System.out.println("data: " + parse.getData());
+
+		System.out.println("text: " + parse.getText());
+
+	}
 
 	private DOMContentUtils utils;
 
-	public ParseResult getParse(Content content) throws Exception {
+	public Parse getParse(Content content) throws Exception {
 
 		HTMLMetaTags metaTags = new HTMLMetaTags();
 
@@ -86,7 +85,7 @@ public class HTMLParser {
 		try {
 			base = new URL(content.getBaseUrl());
 		} catch (MalformedURLException e) {
-			return new ParseStatus(e).getEmptyParseResult(content.getUrl());
+			return null;
 		}
 
 		String text = "";
@@ -161,10 +160,10 @@ public class HTMLParser {
 		}
 		ParseData parseData = new ParseData(status, title, outlinks,
 				content.getMetadata(), metadata);
-		ParseResult parseResult = ParseResult.createParseResult(
-				content.getUrl(), new ParseImpl(text, parseData));
-
-		return parseResult;
+		// ParseResult parseResult = ParseResult.createParseResult(
+		// content.getUrl(), new ParseImpl(text, parseData));
+		return new ParseImpl(text, parseData);
+		// return parseResult;
 
 		// run filters on parse
 		/*
@@ -177,13 +176,14 @@ public class HTMLParser {
 		 */
 
 	}
+
 	private String parserImpl;
 	private String defaultCharEncoding;
-	
-	public void setConf(){
-		parserImpl="neko";
-		defaultCharEncoding="windows-1252";
-		utils=new DOMContentUtils();
+
+	public void setConf() {
+		parserImpl = "neko";
+		defaultCharEncoding = "windows-1252";
+		utils = new DOMContentUtils();
 	}
 
 	private DocumentFragment parse(InputSource input) throws Exception {
@@ -226,9 +226,9 @@ public class HTMLParser {
 			parser.setFeature(
 					"http://cyberneko.org/html/features/balance-tags/document-fragment",
 					true);
-//			parser.setFeature(
-//					"http://cyberneko.org/html/features/report-errors",
-//					LOG.isTraceEnabled());
+			// parser.setFeature(
+			// "http://cyberneko.org/html/features/report-errors",
+			// LOG.isTraceEnabled());
 		} catch (SAXException e) {
 		}
 		// convert Document to DocumentFragment
@@ -245,14 +245,14 @@ public class HTMLParser {
 				parser.parse(input, frag);
 				if (!frag.hasChildNodes())
 					break;
-//				if (LOG.isInfoEnabled()) {
-//					LOG.info(" - new frag, " + frag.getChildNodes().getLength()
-//							+ " nodes.");
-//				}
+				// if (LOG.isInfoEnabled()) {
+				// LOG.info(" - new frag, " + frag.getChildNodes().getLength()
+				// + " nodes.");
+				// }
 				res.appendChild(frag);
 			}
 		} catch (Exception e) {
-//			LOG.error("Error: ", e);
+			// LOG.error("Error: ", e);
 		}
 		;
 		return res;
