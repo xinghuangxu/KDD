@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import kdd.xinghuangxu.parse.html.dataStruc.ParseData;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseImpl;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseResult;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseStatus;
+import kdd.xinghuangxu.parse.html.newsUtils.BbcDOMContentUtils;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
 
 import org.apache.hadoop.conf.Configuration;
@@ -54,7 +56,14 @@ public class HTMLParser {
 
 		// LOG.setLevel(Level.FINE);
 		String url = args[0];
-		byte[] bytes = HtmlSource.getUrlSourceBytes(url);
+//		HtmlSource mySource=new HtmlSource(url);
+//		mySource.WriteOutSource("Source.html");
+//		byte[] content = mySource.getContent();
+//		
+//		InputSource input = new InputSource(new ByteArrayInputStream(
+//				content));
+//		DocumentFragment root=parse(input);
+		//byte[] bytes = HtmlSource.getUrlSourceBytes(url);
 		// String url = "file:"+name;
 		// File file = new File(name);
 		// byte[] bytes = new byte[(int)file.length()];
@@ -64,16 +73,54 @@ public class HTMLParser {
 		// HtmlParser parser = new HtmlParser();
 		// parser.setConf(conf);
 		// HTMLParser htmlParser=new HTMLParser();
-		Parse parse = new HTMLParser().getParse(new Content(url, url, bytes,
-				"text/html", new Metadata()));
-		// Parse parse=parseResult.get(url);
-		// Parse parse = parser.getParse(
-		// new Content(url, url, bytes, "text/html", new Metadata())).get(url);
-		System.out.println("data: " + parse.getData());
+		
+//		Parse parse = new HTMLParser().getParse(new Content(url, url, content,
+//				"text/html", new Metadata()));
+////		// Parse parse=parseResult.get(url);
+////		// Parse parse = parser.getParse(
+////		// new Content(url, url, bytes, "text/html", new Metadata())).get(url);
+//		System.out.println("data: " + parse.getData());
 
-		System.out.println("text: " + parse.getText());
-
+//		System.out.println("text: " + parse.getText());
+//		System.out.println("Successfully run!");
+		
+		String xml= new HTMLParser().BbcNewsParsing(url);
+		System.out.println(xml);
+		return;
 	}
+	
+	public String BbcNewsParsing(String url) throws Exception{
+		
+		StringBuilder bbcXml=new StringBuilder();
+		bbcXml.append("<id>"+url+"</id>");
+		
+		HtmlSource mySource=new HtmlSource(url);
+		//mySource.WriteOutSource("Source.html");
+		byte[] content = mySource.getContent();
+		
+		//Build the xml tree by calling parse() who use nekoHTML
+		InputSource input = new InputSource(new ByteArrayInputStream(content));
+		DocumentFragment root=parse(input);
+		
+		BbcDOMContentUtils bbcUtils=new BbcDOMContentUtils();
+		StringBuffer sb=new StringBuffer();
+		String title=bbcUtils.getNewsTitle(sb, root);
+		bbcXml.append("<Title>"+title+"</Title>");
+		sb.setLength(0);
+		String body= bbcUtils.getStoryBody(sb, root);
+		bbcXml.append("<body>"+body+"</body>");
+		
+		
+		return bbcXml.toString();
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	private DOMContentUtils utils;
 
@@ -112,6 +159,8 @@ public class HTMLParser {
 		// input.setEncoding(encoding);
 		// if (LOG.isTraceEnabled()) { LOG.trace("Parsing..."); }
 		root = parse(input);
+		//Write out the root content to see what is in it.
+		//System.out.println(root.getTextContent());
 		// } catch (IOException e) {
 		// return new ParseStatus(e).getEmptyParseResult(content.getUrl(),
 		// getConf());
@@ -126,7 +175,9 @@ public class HTMLParser {
 		// return new ParseStatus(e).getEmptyParseResult(content.getUrl(),
 		// getConf());
 		// }
-
+//		StringBuffer newsSb=new StringBuffer();
+//		BbcDOMContentUtils myNews=new BbcDOMContentUtils();
+//		System.out.println(myNews.getStoryBody(newsSb, root));
 		// get meta directives
 		HTMLMetaProcessor.getMetaTags(metaTags, root, base);
 

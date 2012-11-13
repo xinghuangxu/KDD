@@ -17,9 +17,9 @@ import org.w3c.dom.NodeList;
 public class NodeWalker {
 
   // the root node the the stack holding the nodes
-  private Node currentNode;
-  private NodeList currentChildren;
-  private Stack<Node> nodes;
+  protected Node currentNode;
+  protected NodeList currentChildren;
+  protected Stack<Node> nodes;
   
   /**
    * Starts the <code>Node</code> tree from the root node.
