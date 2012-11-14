@@ -1,8 +1,9 @@
-package kdd.xinghuangxu.parse.html;
+package kdd.xinghuangxu.parse.html.tagsoup;
 
 
 
 import java.util.Stack;
+
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;

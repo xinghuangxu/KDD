@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -21,21 +22,39 @@ import kdd.xinghuangxu.parse.html.dataStruc.ParseData;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseImpl;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseResult;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseStatus;
-import kdd.xinghuangxu.parse.html.newsUtils.BbcDOMContentUtils;
+import kdd.xinghuangxu.parse.html.news.bbc.BbcDOMContentUtils;
+import kdd.xinghuangxu.parse.html.tagsoup.DOMBuilder;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
+import kdd.xinghuangxu.parse.html.util.NewsDOMContentUtils;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.html.dom.HTMLDocumentImpl;
+import org.apache.nutch.parse.Parser;
 import org.cyberneko.html.parsers.DOMFragmentParser;
 import org.w3c.dom.DocumentFragment;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class BbcHtmlParser {
+public class NewsHtmlParser  {
 
-	public BbcHtmlParser() {
+	public static final String DIR_NAME = "DB";
+	
+	public static final String CORPUS_FILE_NAME = "corpus_db.xml";
+	public static final String LINK_FILE_NAME = "link_db.xml";
+	
+	public NewsHtmlParser() {
 		setConf();
+	}
+	
+	public String getPath() {
+		String current;
+		try {
+			current = new File(".").getCanonicalPath();
+		} catch (IOException e) {
+			return "";
+		}
+		return current+DIR_NAME+"\\"+CORPUS_FILE_NAME;
 	}
 
 	// /TODO Set Up Input parameter What parameter should I input?"
@@ -83,36 +102,38 @@ public class BbcHtmlParser {
 
 //		System.out.println("text: " + parse.getText());
 //		System.out.println("Successfully run!");
-		
-		String xml= new BbcHtmlParser().BbcNewsParseall(args);
-		HtmlSource.Write(xml,"BbcCorpus.xml");
+		NewsHtmlParser parser=new NewsHtmlParser();
+		Corpus corpus= parser.ParseAllNews(args);
+		parser.WriteCorpus(corpus);
 		return;
 	}
 	
+	public void WriteCorpus(Corpus corpus){
+		corpus.Write();
+	}
 	
-	
-	private String BbcNewsParseall(String[] urls) {
-		StringBuilder bbcXml=new StringBuilder();
-		bbcXml.append("<Corpus>");
+	public Corpus ParseAllNews(String[] urls) {
+		Corpus corpus=new Corpus();
 		for(int index=0; index<urls.length;index++){
 			try{
-			bbcXml.append(BbcNewsParse(urls[index]));
-			System.out.println((index+1)+". "+urls[index]);
+			corpus.add(new URL(urls[index]).getPath(),ParseNews(new URL(urls[index])));
+			//System.out.println((index+1)+". "+urls[index]);
 			}
 			catch(Exception e){
 				
 			}
 		}
-		bbcXml.append("</Corpus>");
-		return bbcXml.toString();
+		return corpus;
 	}
+	
+	
 
-	private StringBuilder BbcNewsParse(String url) throws Exception{
+	
+	public StringBuilder ParseNews(URL url) throws Exception{
 
-		StringBuilder bbcXml=new StringBuilder();
-		bbcXml.append("<document>");
-		bbcXml.append("<id>"+url+"</id>");
-
+		StringBuilder document=new StringBuilder();
+		document.append(createElement("id",url.toString().replace("&", "&amp;")));
+		
 		HtmlSource mySource=new HtmlSource(url);
 		//mySource.WriteOutSource("Source.html");
 		byte[] content = mySource.getContent();
@@ -120,31 +141,29 @@ public class BbcHtmlParser {
 		//Build the xml tree by calling parse() who use nekoHTML
 		InputSource input = new InputSource(new ByteArrayInputStream(content));
 		DocumentFragment root=parse(input);
-
-		BbcDOMContentUtils bbcUtils=new BbcDOMContentUtils();
+		
+		
 		StringBuffer sb=new StringBuffer();
 				
 		//get title
-		String title=bbcUtils.getNewsTitle(sb, root);
-		bbcXml.append("<Title>"+title.replaceAll("&", "&amp;")+"</Title>");
+		String title=utils.getNewsTitle(sb, root);
+		document.append(createElement("title",title.replaceAll("&", "&amp;")));
 		
 		//get date
-		String date=bbcUtils.getDate(root, new URL(url));
-		bbcXml.append("<Date>"+date+"</Date>");
+		String date=utils.getDate(root, url);
+		document.append(createElement("date",date.replaceAll("&", "&amp;")));
 		
 		//get body
 		sb.setLength(0);
-		String body= bbcUtils.getStoryBody(sb, root);
-		bbcXml.append("<body>"+body.replaceAll("&", "&amp;")+"</body>");
+		String body= utils.getStoryBody(sb, root);
+		document.append(createElement("body",body.replaceAll("&", "&amp;")));
 		
 		//Get related-story  
-		Outlink[] links= bbcUtils.getRelatedStoryLinks( root, new URL(url));
-		for(Outlink ol:links){
-			bbcXml.append("<Related>"+ol.getToUrl().replaceAll("&", "&amp;")+"</Related>");
+		Outlink[] links= utils.getRelatedStoryLinks( root, url);
+		for(Outlink outlink:links){
+			document.append(createElement("related",outlink.getToUrl().replaceAll("&", "&amp;")));
 		}
-
-		bbcXml.append("</document>");
-		return bbcXml;
+		return document;
 
 	}
 
@@ -154,119 +173,33 @@ public class BbcHtmlParser {
 	
 	
 
-	private DOMContentUtils utils;
-
-	public Parse getParse(Content content) throws Exception {
-
-		HTMLMetaTags metaTags = new HTMLMetaTags();
-
-		URL base;
-		try {
-			base = new URL(content.getBaseUrl());
-		} catch (MalformedURLException e) {
-			return null;
-		}
-
-		String text = "";
-		String title = "";
-		Outlink[] outlinks = new Outlink[0];
-		Metadata metadata = new Metadata();
-
-		// parse the content
-		DocumentFragment root;
-		// try {
-		byte[] contentInOctets = content.getContent();
-		InputSource input = new InputSource(new ByteArrayInputStream(
-				contentInOctets));
-
-		// EncodingDetector detector = new EncodingDetector(conf);
-		// detector.autoDetectClues(content, true);
-		// detector.addClue(sniffCharacterEncoding(contentInOctets), "sniffed");
-		// String encoding = detector.guessEncoding(content,
-		// defaultCharEncoding);
-
-		// metadata.set(Metadata.ORIGINAL_CHAR_ENCODING, encoding);
-		// metadata.set(Metadata.CHAR_ENCODING_FOR_CONVERSION, encoding);
-
-		// input.setEncoding(encoding);
-		// if (LOG.isTraceEnabled()) { LOG.trace("Parsing..."); }
-		root = parse(input);
-		//Write out the root content to see what is in it.
-		//System.out.println(root.getTextContent());
-		// } catch (IOException e) {
-		// return new ParseStatus(e).getEmptyParseResult(content.getUrl(),
-		// getConf());
-		// } catch (DOMException e) {
-		// return new ParseStatus(e).getEmptyParseResult(content.getUrl(),
-		// getConf());
-		// } catch (SAXException e) {
-		// return new ParseStatus(e).getEmptyParseResult(content.getUrl(),
-		// getConf());
-		// } catch (Exception e) {
-		// LOG.error("Error: ", e);
-		// return new ParseStatus(e).getEmptyParseResult(content.getUrl(),
-		// getConf());
-		// }
-//		StringBuffer newsSb=new StringBuffer();
-//		BbcDOMContentUtils myNews=new BbcDOMContentUtils();
-//		System.out.println(myNews.getStoryBody(newsSb, root));
-		// get meta directives
-		HTMLMetaProcessor.getMetaTags(metaTags, root, base);
-
-		// check meta directives
-		if (!metaTags.getNoIndex()) { // okay to index
-			StringBuffer sb = new StringBuffer();
-			utils.getText(sb, root); // extract text
-			text = sb.toString();
-			sb.setLength(0);
-			// if (LOG.isTraceEnabled()) { LOG.trace("Getting title..."); }
-			utils.getTitle(sb, root); // extract title
-			title = sb.toString().trim();
-		}
-
-		if (!metaTags.getNoFollow()) { // okay to follow links
-			ArrayList<Outlink> l = new ArrayList<Outlink>(); // extract outlinks
-			URL baseTag = utils.getBase(root);
-			// if (LOG.isTraceEnabled()) { LOG.trace("Getting links..."); }
-			utils.getOutlinks(baseTag != null ? baseTag : base, l, root);
-			outlinks = l.toArray(new Outlink[l.size()]);
-			// if (LOG.isTraceEnabled()) {
-			// LOG.trace("found "+outlinks.length+" outlinks in "+content.getUrl());
-			// }
-		}
-
-		ParseStatus status = new ParseStatus(ParseStatus.SUCCESS);
-		if (metaTags.getRefresh()) {
-			status.setMinorCode(ParseStatus.SUCCESS_REDIRECT);
-			status.setArgs(new String[] { metaTags.getRefreshHref().toString(),
-					Integer.toString(metaTags.getRefreshTime()) });
-		}
-		ParseData parseData = new ParseData(status, title, outlinks,
-				content.getMetadata(), metadata);
-		// ParseResult parseResult = ParseResult.createParseResult(
-		// content.getUrl(), new ParseImpl(text, parseData));
-		return new ParseImpl(text, parseData);
-		// return parseResult;
-
-		// run filters on parse
-		/*
-		 * ParseResult filteredParse = this.htmlParseFilters.filter(content,
-		 * parseResult, metaTags, root); if (metaTags.getNoCache()) { // not
-		 * okay to cache for (Map.Entry<org.apache.hadoop.io.Text, Parse> entry
-		 * : filteredParse)
-		 * entry.getValue().getData().getParseMeta().set(Nutch.CACHING_FORBIDDEN_KEY
-		 * , cachingPolicy); } return filteredParse;
-		 */
-
+	private StringBuilder createElement(String name, String value) {
+		StringBuilder sb=new StringBuilder();
+		sb.append("<"+name+">");
+		sb.append(value);
+		sb.append("</"+name+">");
+		return sb;
 	}
 
+
+
+
+
+
+
+	private NewsDOMContentUtils utils;
+
+	
 	private String parserImpl;
 	private String defaultCharEncoding;
 
 	public void setConf() {
+		//Also for the parserImpl can be tagsoup
 		parserImpl = "neko";
 		defaultCharEncoding = "windows-1252";
-		utils = new DOMContentUtils();
+		
+		//Not necessarily BBC News, will add a configuration file
+		utils=new BbcDOMContentUtils();
 	}
 
 	private DocumentFragment parse(InputSource input) throws Exception {

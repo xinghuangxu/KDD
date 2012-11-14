@@ -1,4 +1,4 @@
-package kdd.xinghuangxu.parse.html;
+package kdd.xinghuangxu.parse.html.tagsoup;
 
 
 /**

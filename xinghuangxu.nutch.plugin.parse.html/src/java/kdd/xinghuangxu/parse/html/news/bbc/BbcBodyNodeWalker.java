@@ -1,4 +1,4 @@
-package kdd.xinghuangxu.parse.html.newsUtils;
+package kdd.xinghuangxu.parse.html.news.bbc;
 
 
 import org.w3c.dom.Node;

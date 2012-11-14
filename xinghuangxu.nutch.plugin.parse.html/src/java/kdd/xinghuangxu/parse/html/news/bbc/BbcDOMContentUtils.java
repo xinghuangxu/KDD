@@ -1,4 +1,4 @@
-package kdd.xinghuangxu.parse.html.newsUtils;
+package kdd.xinghuangxu.parse.html.news.bbc;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,11 +11,16 @@ import kdd.xinghuangxu.parse.html.HTMLMetaProcessor;
 import kdd.xinghuangxu.parse.html.dataStruc.HTMLMetaTags;
 import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
+import kdd.xinghuangxu.parse.html.util.NewsDOMContentUtils;
 import kdd.xinghuangxu.parse.html.util.NodeWalker;
 
-public class BbcDOMContentUtils extends DOMContentUtils {
+public class BbcDOMContentUtils extends DOMContentUtils implements NewsDOMContentUtils {
 	
 	
+	/* (non-Javadoc)
+	 * @see kdd.xinghuangxu.parse.html.news.bbc.NewsDOMContentUtils#getDate(org.w3c.dom.Node, java.net.URL)
+	 */
+	@Override
 	public String getDate(Node node, URL url){
 		HTMLMetaTags metaTags = new HTMLMetaTags();
 		URL base= getBase(node);
@@ -96,6 +101,10 @@ public class BbcDOMContentUtils extends DOMContentUtils {
 //	}
 	
 
+	/* (non-Javadoc)
+	 * @see kdd.xinghuangxu.parse.html.news.bbc.NewsDOMContentUtils#getRelatedStoryLinks(org.w3c.dom.Node, java.net.URL)
+	 */
+	@Override
 	public Outlink[] getRelatedStoryLinks(Node node,URL url){
 		ArrayList<Outlink> links = new ArrayList<Outlink>(); // extract outlinks
 		URL baseTag = getBase(node);
@@ -105,6 +114,10 @@ public class BbcDOMContentUtils extends DOMContentUtils {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see kdd.xinghuangxu.parse.html.news.bbc.NewsDOMContentUtils#getStoryBody(java.lang.StringBuffer, org.w3c.dom.Node)
+	 */
+	@Override
 	public String getStoryBody(StringBuffer sb, Node node) {
 		//Node storyNode = getStoryBodyNode(node);
 		Node storyNode = getNode(node, "div", "class", "story-body");
@@ -112,6 +125,10 @@ public class BbcDOMContentUtils extends DOMContentUtils {
 		return sb.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see kdd.xinghuangxu.parse.html.news.bbc.NewsDOMContentUtils#getNewsTitle(java.lang.StringBuffer, org.w3c.dom.Node)
+	 */
+	@Override
 	public String getNewsTitle(StringBuffer sb, Node node) {
 		super.getTitle(sb, node);
 		return sb.toString();
