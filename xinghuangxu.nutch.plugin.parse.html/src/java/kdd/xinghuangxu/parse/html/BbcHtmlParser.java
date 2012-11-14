@@ -32,9 +32,9 @@ import org.w3c.dom.DocumentFragment;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class HTMLParser {
+public class BbcHtmlParser {
 
-	public HTMLParser() {
+	public BbcHtmlParser() {
 		setConf();
 	}
 
@@ -84,38 +84,70 @@ public class HTMLParser {
 //		System.out.println("text: " + parse.getText());
 //		System.out.println("Successfully run!");
 		
-		String xml= new HTMLParser().BbcNewsParsing(url);
-		System.out.println(xml);
+		String xml= new BbcHtmlParser().BbcNewsParseall(args);
+		HtmlSource.Write(xml,"BbcCorpus.xml");
 		return;
 	}
 	
-	public String BbcNewsParsing(String url) throws Exception{
-		
+	
+	
+	private String BbcNewsParseall(String[] urls) {
 		StringBuilder bbcXml=new StringBuilder();
+		bbcXml.append("<Corpus>");
+		for(int index=0; index<urls.length;index++){
+			try{
+			bbcXml.append(BbcNewsParse(urls[index]));
+			System.out.println((index+1)+". "+urls[index]);
+			}
+			catch(Exception e){
+				
+			}
+		}
+		bbcXml.append("</Corpus>");
+		return bbcXml.toString();
+	}
+
+	private StringBuilder BbcNewsParse(String url) throws Exception{
+
+		StringBuilder bbcXml=new StringBuilder();
+		bbcXml.append("<document>");
 		bbcXml.append("<id>"+url+"</id>");
-		
+
 		HtmlSource mySource=new HtmlSource(url);
 		//mySource.WriteOutSource("Source.html");
 		byte[] content = mySource.getContent();
-		
+
 		//Build the xml tree by calling parse() who use nekoHTML
 		InputSource input = new InputSource(new ByteArrayInputStream(content));
 		DocumentFragment root=parse(input);
-		
+
 		BbcDOMContentUtils bbcUtils=new BbcDOMContentUtils();
 		StringBuffer sb=new StringBuffer();
+				
+		//get title
 		String title=bbcUtils.getNewsTitle(sb, root);
-		bbcXml.append("<Title>"+title+"</Title>");
+		bbcXml.append("<Title>"+title.replaceAll("&", "&amp;")+"</Title>");
+		
+		//get date
+		String date=bbcUtils.getDate(root, new URL(url));
+		bbcXml.append("<Date>"+date+"</Date>");
+		
+		//get body
 		sb.setLength(0);
 		String body= bbcUtils.getStoryBody(sb, root);
-		bbcXml.append("<body>"+body+"</body>");
+		bbcXml.append("<body>"+body.replaceAll("&", "&amp;")+"</body>");
 		
-		
-		return bbcXml.toString();
-		
+		//Get related-story  
+		Outlink[] links= bbcUtils.getRelatedStoryLinks( root, new URL(url));
+		for(Outlink ol:links){
+			bbcXml.append("<Related>"+ol.getToUrl().replaceAll("&", "&amp;")+"</Related>");
+		}
+
+		bbcXml.append("</document>");
+		return bbcXml;
+
 	}
-	
-	
+
 	
 	
 	

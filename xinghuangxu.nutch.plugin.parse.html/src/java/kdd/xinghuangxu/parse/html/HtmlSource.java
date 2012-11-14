@@ -43,16 +43,16 @@ public class HtmlSource {
 	}
 	
 
-	public  void Write() {
+	public static  void Write(String data,String fileName) {
 
 		//String url = "http://www.bbc.co.uk/news/world-us-canada-20257840";
 		try {
 			// Create file
-			FileWriter fstream = new FileWriter("out.html");
+			FileWriter fstream = new FileWriter(fileName);
 			BufferedWriter out = new BufferedWriter(fstream);
-			out.write(getUrlSourceString(url));
+			out.write(data);
 			out.close();
-			System.out.println("Successfully ended!");
+			System.out.println("Successfully Write out to: "+fileName);
 		} catch (Exception e) {// Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 		}

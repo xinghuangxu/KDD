@@ -190,7 +190,7 @@ public class DOMContentUtils {
 
 	/** If Node contains a BASE tag then it's HREF is returned. */
 	public URL getBase(Node node) {
-
+		
 		NodeWalker walker = new NodeWalker(node);
 
 		while (walker.hasNext()) {
