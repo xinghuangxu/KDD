@@ -36,17 +36,32 @@ import org.w3c.dom.DocumentFragment;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class NewsHtmlParser  {
+public class NewsHtmlParser {
 
 	public static final String DIR_NAME = "DB";
-	
+
 	public static final String CORPUS_FILE_NAME = "corpus_db.xml";
 	public static final String LINK_FILE_NAME = "link_db.xml";
-	
+
+	private NewsDOMContentUtils utils;
+
+	private String parserImpl;
+	private String defaultCharEncoding;
+
 	public NewsHtmlParser() {
 		setConf();
 	}
-	
+
+	public void setConf() {
+		// dafault value is neko, can also be tagsoup
+		parserImpl = "neko";
+		defaultCharEncoding = "windows-1252";
+
+		// Not necessarily BBC News, will add a configuration file to design
+		// what is the target news provider
+		utils = new BbcDOMContentUtils();
+	}
+
 	public String getPath() {
 		String current;
 		try {
@@ -54,152 +69,83 @@ public class NewsHtmlParser  {
 		} catch (IOException e) {
 			return "";
 		}
-		return current+DIR_NAME+"\\"+CORPUS_FILE_NAME;
+		return current + DIR_NAME + "\\" + CORPUS_FILE_NAME;
 	}
 
-	// /TODO Set Up Input parameter What parameter should I input?"
 	public static void main(String[] args) throws Exception {
 
-		// try{
-		// //create file
-		// FileWriter fstream=new FileWriter("out.txt");
-		// BufferedWriter out=new BufferedWriter(fstream);
-		// out.write("Hellow Java");
-		// out.close();
-		// }
-		// catch(Exception e)
-		// {
-		// System.err.print("Error: "+e.getMessage());
-		// }
-		//
-
-		// LOG.setLevel(Level.FINE);
-		String url = args[0];
-//		HtmlSource mySource=new HtmlSource(url);
-//		mySource.WriteOutSource("Source.html");
-//		byte[] content = mySource.getContent();
-//		
-//		InputSource input = new InputSource(new ByteArrayInputStream(
-//				content));
-//		DocumentFragment root=parse(input);
-		//byte[] bytes = HtmlSource.getUrlSourceBytes(url);
-		// String url = "file:"+name;
-		// File file = new File(name);
-		// byte[] bytes = new byte[(int)file.length()];
-		// DataInputStream in = new DataInputStream(new FileInputStream(file));
-		// in.readFully(bytes);
-		// Configuration conf = NutchConfiguration.create();
-		// HtmlParser parser = new HtmlParser();
-		// parser.setConf(conf);
-		// HTMLParser htmlParser=new HTMLParser();
-		
-//		Parse parse = new HTMLParser().getParse(new Content(url, url, content,
-//				"text/html", new Metadata()));
-////		// Parse parse=parseResult.get(url);
-////		// Parse parse = parser.getParse(
-////		// new Content(url, url, bytes, "text/html", new Metadata())).get(url);
-//		System.out.println("data: " + parse.getData());
-
-//		System.out.println("text: " + parse.getText());
-//		System.out.println("Successfully run!");
-		NewsHtmlParser parser=new NewsHtmlParser();
-		Corpus corpus= parser.ParseAllNews(args);
+		NewsHtmlParser parser = new NewsHtmlParser();
+		Corpus corpus = parser.ParseAllNews(args);
 		parser.WriteCorpus(corpus);
 		return;
 	}
-	
-	public void WriteCorpus(Corpus corpus){
+
+	public void WriteCorpus(Corpus corpus) {
 		corpus.Write();
 	}
-	
+
 	public Corpus ParseAllNews(String[] urls) {
-		Corpus corpus=new Corpus();
-		for(int index=0; index<urls.length;index++){
-			try{
-			corpus.add(new URL(urls[index]).getPath(),ParseNews(new URL(urls[index])));
-			//System.out.println((index+1)+". "+urls[index]);
-			}
-			catch(Exception e){
-				
+		Corpus corpus = new Corpus();
+		for (int index = 0; index < urls.length; index++) {
+			try {
+				System.out.println(new URL(urls[index]).getHost());
+				corpus.add(new URL(urls[index]).getPath(), ParseNews(new URL(
+						urls[index])));
+				// System.out.println((index+1)+". "+urls[index]);
+			} catch (Exception e) {
+
 			}
 		}
 		return corpus;
 	}
-	
-	
 
-	
-	public StringBuilder ParseNews(URL url) throws Exception{
+	public StringBuilder ParseNews(URL url) throws Exception {
 
-		StringBuilder document=new StringBuilder();
-		document.append(createElement("id",url.toString().replace("&", "&amp;")));
-		
-		HtmlSource mySource=new HtmlSource(url);
-		//mySource.WriteOutSource("Source.html");
+		StringBuilder document = new StringBuilder();
+		document.append(createElement("id", url.toString()
+				.replace("&", "&amp;")));
+
+		HtmlSource mySource = new HtmlSource(url);
+		// mySource.WriteOutSource("Source.html");
 		byte[] content = mySource.getContent();
 
-		//Build the xml tree by calling parse() who use nekoHTML
+		// Build the xml tree by calling parse() who use nekoHTML
 		InputSource input = new InputSource(new ByteArrayInputStream(content));
-		DocumentFragment root=parse(input);
-		
-		
-		StringBuffer sb=new StringBuffer();
-				
-		//get title
-		String title=utils.getNewsTitle(sb, root);
-		document.append(createElement("title",title.replaceAll("&", "&amp;")));
-		
-		//get date
-		String date=utils.getDate(root, url);
-		document.append(createElement("date",date.replaceAll("&", "&amp;")));
-		
-		//get body
+		DocumentFragment root = parse(input);
+
+		StringBuffer sb = new StringBuffer();
+
+		// get title
+		String title = utils.getNewsTitle(sb, root);
+		document.append(createElement("title", title.replaceAll("&", "&amp;")));
+
+		// get date
+		String date = utils.getDate(root, url);
+		document.append(createElement("date", date.replaceAll("&", "&amp;")));
+
+		// get body
 		sb.setLength(0);
-		String body= utils.getStoryBody(sb, root);
-		document.append(createElement("body",body.replaceAll("&", "&amp;")));
-		
-		//Get related-story  
-		Outlink[] links= utils.getRelatedStoryLinks( root, url);
-		for(Outlink outlink:links){
-			document.append(createElement("related",outlink.getToUrl().replaceAll("&", "&amp;")));
+		String body = utils.getStoryBody(sb, root);
+		document.append(createElement("body", body.replaceAll("&", "&amp;")));
+
+		// Get related-story
+		Outlink[] links = utils.getRelatedStoryLinks(root, url);
+		for (Outlink outlink : links) {
+			if ("http://www.bbc.co.uk/news/".equalsIgnoreCase(outlink
+					.getToUrl().substring(0, 26)))
+				document.append(createElement("related", outlink.getToUrl()
+						.replaceAll("&", "&amp;")));
 		}
 		return document;
 
 	}
 
-	
-	
-	
-	
-	
-
 	private StringBuilder createElement(String name, String value) {
-		StringBuilder sb=new StringBuilder();
-		sb.append("<"+name+">");
+		StringBuilder sb = new StringBuilder();
+		sb.append("<" + name + ">");
 		sb.append(value);
-		sb.append("</"+name+">");
+		sb.append("</" + name + ">");
 		return sb;
-	}
-
-
-
-
-
-
-
-	private NewsDOMContentUtils utils;
-
-	
-	private String parserImpl;
-	private String defaultCharEncoding;
-
-	public void setConf() {
-		//Also for the parserImpl can be tagsoup
-		parserImpl = "neko";
-		defaultCharEncoding = "windows-1252";
-		
-		//Not necessarily BBC News, will add a configuration file
-		utils=new BbcDOMContentUtils();
 	}
 
 	private DocumentFragment parse(InputSource input) throws Exception {

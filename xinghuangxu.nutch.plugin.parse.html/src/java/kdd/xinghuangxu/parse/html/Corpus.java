@@ -7,6 +7,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ * @author xinghuang
+ *
+ */
 public class Corpus {
 
 	public static final String DIR_NAME = "DB";
@@ -24,7 +29,7 @@ public class Corpus {
 	public void add(String key, StringBuilder value) {
 		StringBuilder val = corpus.get(key);
 		if (val == null) {
-			System.out.println(key);
+			//System.out.println(key);
 			corpus.put(key, value);
 		}
 	}
