@@ -1,4 +1,4 @@
-KDD
+
 This project is a BBC news webpage crawler and parser, used to collect corpus. We need about 10,000 documents from BBC News.
 
 
