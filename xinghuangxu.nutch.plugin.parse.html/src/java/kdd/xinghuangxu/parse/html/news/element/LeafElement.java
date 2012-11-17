@@ -5,14 +5,13 @@ import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
 public abstract class LeafElement implements NewsElement{
 
-	private String name;
-	private String value;
+	protected String name;
+	protected String value;
 	
 	
-	public LeafElement(ParseHelper helper) throws NewsParsingException{
-		value=parse(helper).toString();
-	}
-	
+//	public LeafElement(ParseHelper helper) throws NewsParsingException{
+//		value=parse(helper).toString();
+//	}
 	
 	@Override
 	public String getName() {
@@ -25,6 +24,14 @@ public abstract class LeafElement implements NewsElement{
 	}
 
 	@Override
-	public abstract StringBuilder parse(ParseHelper helper) throws NewsParsingException;
+	public abstract void parse(ParseHelper helper) throws NewsParsingException;
 	
+	@Override
+	public String toString() {
+		StringBuilder sb= new StringBuilder();
+		sb.append("<"+name+">");
+		sb.append(value);
+		sb.append("</"+name+">");
+		return sb.toString();
+	}
 }

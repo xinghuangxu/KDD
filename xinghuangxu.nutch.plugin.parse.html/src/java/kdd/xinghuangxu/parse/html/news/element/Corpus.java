@@ -7,12 +7,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import kdd.xinghuangxu.parse.html.news.ParseHelper;
+import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
+
 /**
  * 
  * @author xinghuang
  *
  */
-public class Corpus {
+public class Corpus extends CompositeElement {
 
 	public static final String DIR_NAME = "DB";
 
@@ -20,9 +23,13 @@ public class Corpus {
 
 	private Map<String, StringBuilder> corpus = null;
 
-	public Corpus() {
+	public Corpus(String key){
 		corpus = new HashMap<String, StringBuilder>();
 	}
+	
+//	public Corpus() {
+//		corpus = new HashMap<String, StringBuilder>();
+//	}
 
 	// private StringBuilder sb = new StringBuilder();
 
@@ -69,6 +76,12 @@ public class Corpus {
 			System.err.println("Error: " + e.getMessage());
 		}
 
+	}
+
+	@Override
+	public void parse(ParseHelper helper) throws NewsParsingException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

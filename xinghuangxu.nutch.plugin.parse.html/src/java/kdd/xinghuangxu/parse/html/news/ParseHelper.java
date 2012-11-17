@@ -12,6 +12,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import kdd.xinghuangxu.parse.html.HtmlSource;
+import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
 import kdd.xinghuangxu.parse.html.news.bbc.BbcDOMContentUtils;
 import kdd.xinghuangxu.parse.html.tagsoup.DOMBuilder;
 
@@ -21,6 +22,7 @@ public class ParseHelper {
 	private String parserImpl = "neko";
 	private String defaultCharEncoding = "windows-1252";
 	private NewsDOMContentUtils utils;
+	StringBuffer sb = new StringBuffer();
 
 	URL url;
 	DocumentFragment root;
@@ -118,6 +120,22 @@ public class ParseHelper {
 
 	public NewsDOMContentUtils getNewDOMContentUtils() {
 		return utils;
+	}
+	
+	public String getTitle(){
+		return utils.getNewsTitle(sb,root).replaceAll("&", "&amp;");
+	}
+	
+	public String getDate(){
+		return utils.getDate(root, url).replaceAll("&", "&amp;");
+	}
+	
+	public String getBody(){
+		return utils.getStoryBody(sb, root).replaceAll("&", "&amp;");
+	}
+	
+	public Outlink[] getRelatedLinks(){
+		return utils.getRelatedStoryLinks(root, url);
 	}
 
 }

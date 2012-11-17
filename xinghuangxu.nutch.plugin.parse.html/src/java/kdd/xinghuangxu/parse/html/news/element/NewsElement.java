@@ -7,7 +7,6 @@ public interface NewsElement {
 	
 	public String getName();
 	public String getValue();
-	public StringBuilder parse(ParseHelper helper)throws NewsParsingException;
-	public String toString();
+	public void parse(ParseHelper helper)throws NewsParsingException;
 	
 }
