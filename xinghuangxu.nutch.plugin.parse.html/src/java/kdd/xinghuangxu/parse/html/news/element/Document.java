@@ -67,15 +67,15 @@ public class Document extends CompositeElement {
 
 	}
 	
-	@Override
-	public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("<"+name+">");
-		sb.append("<id>"+key+"</id>");
-		sb.append( super.toString());
-		sb.append("</"+name+">");
-		return sb.toString();
-	}
+//	@Override
+//	public String toString() {
+//		StringBuilder sb=new StringBuilder();
+//		sb.append("<"+name+">");
+//		sb.append("<id>"+key+"</id>");
+//		sb.append( super.toString());
+//		sb.append("</"+name+">");
+//		return sb.toString();
+//	}
 
 
 

@@ -4,9 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import kdd.xinghuangxu.parse.html.news.LinkDB;
 import kdd.xinghuangxu.parse.html.news.ParseHelper;
 import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
@@ -21,11 +23,13 @@ public class Corpus extends CompositeElement {
 
 	public static final String CORPUS_FILE_NAME = "corpus_db.xml";
 
-	private Map<String, StringBuilder> corpus = null;
+	private Map<String, Document> corpus = null;
+	
+	private LinkDB links;
 
-	public Corpus(String key){
-		super(key);
-		corpus = new HashMap<String, StringBuilder>();
+	public Corpus(LinkDB links){
+		this.links=links;
+		corpus = new HashMap<String, Document>();
 	}
 	
 //	public Corpus() {
@@ -34,8 +38,8 @@ public class Corpus extends CompositeElement {
 
 	// private StringBuilder sb = new StringBuilder();
 
-	public void add(String key, StringBuilder value) {
-		StringBuilder val = corpus.get(key);
+	public void add(String key, Document value) {
+		Document val = corpus.get(key);
 		if (val == null) {
 			//System.out.println(key);
 			corpus.put(key, value);
@@ -79,9 +83,17 @@ public class Corpus extends CompositeElement {
 
 	}
 
+	public void parse() throws MalformedURLException, NewsParsingException, IOException, Exception{
+		String url;
+		while(( url = links.next())!=null){
+			Document doc=new Document();
+			doc.parse(new ParseHelper(url));
+			add(url,new Document());
+		}
+	}
+	
 	@Override
 	public void parse(ParseHelper helper) throws NewsParsingException {
-		// TODO Auto-generated method stub
 		
 	}
 

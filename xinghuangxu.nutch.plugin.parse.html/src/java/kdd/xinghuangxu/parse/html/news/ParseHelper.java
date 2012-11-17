@@ -26,6 +26,8 @@ public class ParseHelper {
 
 	URL url;
 	DocumentFragment root;
+	
+	
 
 	public ParseHelper(String url) throws MalformedURLException,IOException,Exception {
 
@@ -137,5 +139,6 @@ public class ParseHelper {
 	public Outlink[] getRelatedLinks(){
 		return utils.getRelatedStoryLinks(root, url);
 	}
+
 
 }

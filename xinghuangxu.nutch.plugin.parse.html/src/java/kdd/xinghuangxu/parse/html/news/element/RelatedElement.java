@@ -5,8 +5,9 @@ import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
 public class RelatedElement extends CompositeElement{
 
-	public RelatedElement(String key) {
-		super(key);
+	String url;
+	public RelatedElement(String url) {
+		this.url=url;
 		name="related";
 	}
 	
@@ -14,7 +15,7 @@ public class RelatedElement extends CompositeElement{
 	public String toString() {
 		StringBuilder sb= new StringBuilder();
 		sb.append("<"+name+">");
-		sb.append(key);
+		sb.append(url);
 		sb.append("</"+name+">");
 		return sb.toString();
 	}
