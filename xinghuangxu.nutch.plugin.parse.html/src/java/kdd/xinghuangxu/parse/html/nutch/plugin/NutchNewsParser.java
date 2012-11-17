@@ -11,9 +11,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import kdd.xinghuangxu.parse.html.Corpus;
 import kdd.xinghuangxu.parse.html.HtmlSource;
 import kdd.xinghuangxu.parse.html.NewsHtmlParser;
+import kdd.xinghuangxu.parse.html.news.element.Corpus;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.ParseResult;

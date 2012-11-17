@@ -18,6 +18,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import kdd.xinghuangxu.parse.html.news.element.Corpus;
+
 /**
  * Input URL address Output HTML Source
  * 
@@ -30,8 +32,8 @@ public class HtmlSource {
 
 	private byte[] content;
 
-	public HtmlSource(URL url) throws IOException {
-		this.url = url;
+	public HtmlSource(String url) throws IOException {
+		this.url = new URL(url);
 		content = getUrlSourceBytes();
 	}
 

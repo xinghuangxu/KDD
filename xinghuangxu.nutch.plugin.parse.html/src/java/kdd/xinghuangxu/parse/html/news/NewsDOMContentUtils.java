@@ -1,4 +1,4 @@
-package kdd.xinghuangxu.parse.html.util;
+package kdd.xinghuangxu.parse.html.news;
 
 import java.net.URL;
 

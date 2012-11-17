@@ -22,10 +22,11 @@ import kdd.xinghuangxu.parse.html.dataStruc.ParseData;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseImpl;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseResult;
 import kdd.xinghuangxu.parse.html.dataStruc.ParseStatus;
+import kdd.xinghuangxu.parse.html.news.NewsDOMContentUtils;
 import kdd.xinghuangxu.parse.html.news.bbc.BbcDOMContentUtils;
+import kdd.xinghuangxu.parse.html.news.element.Corpus;
 import kdd.xinghuangxu.parse.html.tagsoup.DOMBuilder;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
-import kdd.xinghuangxu.parse.html.util.NewsDOMContentUtils;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
@@ -84,11 +85,12 @@ public class NewsHtmlParser {
 		corpus.Write();
 	}
 
+	
 	public Corpus ParseAllNews(String[] urls) {
 		Corpus corpus = new Corpus();
 		for (int index = 0; index < urls.length; index++) {
 			try {
-				System.out.println(new URL(urls[index]).getHost());
+				//System.out.println(new URL(urls[index]).getHost());
 				corpus.add(new URL(urls[index]).getPath(), ParseNews(new URL(
 						urls[index])));
 				// System.out.println((index+1)+". "+urls[index]);

@@ -10,12 +10,19 @@ import org.w3c.dom.Node;
 import kdd.xinghuangxu.parse.html.HTMLMetaProcessor;
 import kdd.xinghuangxu.parse.html.dataStruc.HTMLMetaTags;
 import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
+import kdd.xinghuangxu.parse.html.news.NewsDOMContentUtils;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
-import kdd.xinghuangxu.parse.html.util.NewsDOMContentUtils;
 import kdd.xinghuangxu.parse.html.util.NodeWalker;
 
 public class BbcDOMContentUtils extends DOMContentUtils implements NewsDOMContentUtils {
 	
+	private Node node;
+	private URL url;
+	
+	public void DOMContentUtils(Node node,URL url){
+		this.node=node;
+		this.url=url;
+	}
 	
 	/* (non-Javadoc)
 	 * @see kdd.xinghuangxu.parse.html.news.bbc.NewsDOMContentUtils#getDate(org.w3c.dom.Node, java.net.URL)

@@ -1,4 +1,4 @@
-package kdd.xinghuangxu.parse.html;
+package kdd.xinghuangxu.parse.html.news.element;
 
 import java.io.BufferedWriter;
 import java.io.File;
