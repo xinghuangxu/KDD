@@ -8,11 +8,10 @@ import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 public abstract class CompositeElement implements NewsElement {
 
 	protected String name;
-	protected String key;
 	protected List<NewsElement> elements;
 	
-	public CompositeElement(String key){
-		this.key=key;
+	public CompositeElement(){
+	
 	}
 	
 	@Override
@@ -22,7 +21,7 @@ public abstract class CompositeElement implements NewsElement {
 
 	@Override
 	public String getValue() {
-		return key;
+		return "";
 	}
 
 	@Override
@@ -31,11 +30,8 @@ public abstract class CompositeElement implements NewsElement {
 	@Override
 	public String toString() {
 		StringBuilder sb= new StringBuilder();
-		sb.append("<"+name+">");
-		sb.append("<id>"+key+"</id>");
 		for(int i=0;i<elements.size();i++)
 			sb.append(elements.get(i).toString());
-		sb.append("</"+name+">");
 		return sb.toString();
 	}
 	

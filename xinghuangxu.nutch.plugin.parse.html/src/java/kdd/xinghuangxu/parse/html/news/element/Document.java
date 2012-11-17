@@ -12,8 +12,7 @@ import org.w3c.dom.DocumentFragment;
 
 public class Document extends CompositeElement {
 
-	public Document(String key) {
-		super(key);
+	public Document() {
 		name = "document";
 		elements = new ArrayList<NewsElement>();
 
@@ -21,6 +20,7 @@ public class Document extends CompositeElement {
 
 	public void parse(ParseHelper helper) throws NewsParsingException {
 
+		elements.add(new IdElement());
 		elements.add(new TitleElement());
 		elements.add(new DateElement());
 		elements.add(new BodyElement());
@@ -65,6 +65,16 @@ public class Document extends CompositeElement {
 //		}
 //		return document;
 
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb=new StringBuilder();
+		sb.append("<"+name+">");
+		sb.append("<id>"+key+"</id>");
+		sb.append( super.toString());
+		sb.append("</"+name+">");
+		return sb.toString();
 	}
 
 

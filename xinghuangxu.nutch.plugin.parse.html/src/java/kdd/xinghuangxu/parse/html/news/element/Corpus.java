@@ -24,6 +24,7 @@ public class Corpus extends CompositeElement {
 	private Map<String, StringBuilder> corpus = null;
 
 	public Corpus(String key){
+		super(key);
 		corpus = new HashMap<String, StringBuilder>();
 	}
 	
