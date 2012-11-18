@@ -5,7 +5,7 @@ import java.util.Stack;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
+/**From Nutch
  * <p>A utility class that allows the walking of any DOM tree using a stack 
  * instead of recursion.  As the node tree is walked the next node is popped
  * off of the stack and all of its children are automatically added to the 

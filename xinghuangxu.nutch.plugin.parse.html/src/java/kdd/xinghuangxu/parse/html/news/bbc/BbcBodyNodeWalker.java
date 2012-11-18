@@ -5,6 +5,11 @@ import org.w3c.dom.Node;
 
 import kdd.xinghuangxu.parse.html.util.NodeWalker;
 
+/**
+ * A iterator for the page
+ * @author xinghuang
+ *
+ */
 public class BbcBodyNodeWalker extends NodeWalker {
 
 	public BbcBodyNodeWalker(Node rootNode) {

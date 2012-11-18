@@ -13,6 +13,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * From Nuth
  * A collection of methods for extracting content from DOM trees.
  * 
  * This class holds a few utility methods for pulling content out of DOM nodes,

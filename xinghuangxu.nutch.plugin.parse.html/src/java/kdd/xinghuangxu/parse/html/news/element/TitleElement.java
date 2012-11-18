@@ -5,6 +5,11 @@ import org.w3c.dom.DocumentFragment;
 import kdd.xinghuangxu.parse.html.news.ParseHelper;
 import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
+/**
+ * 
+ * @author xinghuang
+ *
+ */
 public class TitleElement extends LeafElement {
 
 	public TitleElement() {

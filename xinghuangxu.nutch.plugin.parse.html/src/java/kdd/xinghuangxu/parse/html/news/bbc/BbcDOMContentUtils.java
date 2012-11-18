@@ -14,6 +14,13 @@ import kdd.xinghuangxu.parse.html.news.NewsDOMContentUtils;
 import kdd.xinghuangxu.parse.html.util.DOMContentUtils;
 import kdd.xinghuangxu.parse.html.util.NodeWalker;
 
+
+/**
+ * 
+ * 
+ * @author xinghuang
+ *
+ */
 public class BbcDOMContentUtils extends DOMContentUtils implements NewsDOMContentUtils {
 	
 	private Node node;

@@ -5,6 +5,11 @@ import com.sun.xml.internal.bind.v2.model.core.LeafInfo;
 import kdd.xinghuangxu.parse.html.news.ParseHelper;
 import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
+/**
+ * 
+ * @author xinghuang
+ *
+ */
 public class IdElement extends LeafElement {
 
 	public IdElement() {

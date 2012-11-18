@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 import org.apache.nutch.util.domain.DomainSuffix;
 import org.apache.nutch.util.domain.DomainSuffixes;
 
-/** Utility class for URL analysis */
+/**From Nutch 
+ * Utility class for URL analysis */
 public class URLUtil {
   
   /**

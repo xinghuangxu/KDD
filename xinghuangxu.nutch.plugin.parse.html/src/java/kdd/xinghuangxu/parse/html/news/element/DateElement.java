@@ -3,6 +3,11 @@ package kdd.xinghuangxu.parse.html.news.element;
 import kdd.xinghuangxu.parse.html.news.ParseHelper;
 import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
+/**
+ * 
+ * @author xinghuang
+ *
+ */
 public class DateElement extends LeafElement{
 	
 	public DateElement() {

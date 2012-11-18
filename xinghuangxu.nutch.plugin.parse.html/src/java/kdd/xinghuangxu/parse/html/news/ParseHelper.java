@@ -14,8 +14,17 @@ import org.xml.sax.SAXException;
 import kdd.xinghuangxu.parse.html.HtmlSource;
 import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
 import kdd.xinghuangxu.parse.html.news.bbc.BbcDOMContentUtils;
-import kdd.xinghuangxu.parse.html.tagsoup.DOMBuilder;
 
+
+/**
+ * serve as a facade to save 
+ * url
+ * root
+ * linkDB
+ * utils
+ * @author xinghuang
+ *
+ */
 public class ParseHelper {
 
 	//This configuration fields can be changed, but not now
@@ -27,9 +36,10 @@ public class ParseHelper {
 	URL url;
 	DocumentFragment root;
 	
+	LinkDB linkDB;
 	
 
-	public ParseHelper(String url) throws MalformedURLException,IOException,Exception {
+	public ParseHelper(String url,LinkDB linkDB) throws MalformedURLException,IOException,Exception {
 
 		this.url = new URL(url);
 		HtmlSource fetcher = new HtmlSource(url);
@@ -37,37 +47,18 @@ public class ParseHelper {
 		InputSource input = new InputSource(new ByteArrayInputStream(content));
 		this.root = parse(input);
 		this.utils=new BbcDOMContentUtils();	
-		
+		this.linkDB=linkDB;
 	}
 
 	public URL getURL() {
 		return url;
 	}
 
+
+
+	
+
 	private DocumentFragment parse(InputSource input) throws Exception {
-		if (parserImpl.equalsIgnoreCase("tagsoup"))
-			return parseTagSoup(input);
-		else
-			return parseNeko(input);
-	}
-
-	private DocumentFragment parseTagSoup(InputSource input) throws Exception {
-		HTMLDocumentImpl doc = new HTMLDocumentImpl();
-		DocumentFragment frag = doc.createDocumentFragment();
-		DOMBuilder builder = new DOMBuilder(doc, frag);
-		org.ccil.cowan.tagsoup.Parser reader = new org.ccil.cowan.tagsoup.Parser();
-		reader.setContentHandler(builder);
-		reader.setFeature(org.ccil.cowan.tagsoup.Parser.ignoreBogonsFeature,
-				true);
-		reader.setFeature(org.ccil.cowan.tagsoup.Parser.bogonsEmptyFeature,
-				false);
-		reader.setProperty("http://xml.org/sax/properties/lexical-handler",
-				builder);
-		reader.parse(input);
-		return frag;
-	}
-
-	private DocumentFragment parseNeko(InputSource input) throws Exception {
 		DOMFragmentParser parser = new DOMFragmentParser();
 		try {
 			parser.setFeature(
@@ -138,6 +129,10 @@ public class ParseHelper {
 	
 	public Outlink[] getRelatedLinks(){
 		return utils.getRelatedStoryLinks(root, url);
+	}
+	
+	public void addLinkDB(String url){
+		linkDB.addQueue(url);
 	}
 
 

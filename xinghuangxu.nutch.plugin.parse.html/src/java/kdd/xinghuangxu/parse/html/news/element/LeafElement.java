@@ -3,6 +3,11 @@ package kdd.xinghuangxu.parse.html.news.element;
 import kdd.xinghuangxu.parse.html.news.ParseHelper;
 import kdd.xinghuangxu.parse.html.news.exception.NewsParsingException;
 
+/**
+ * 
+ * @author xinghuang
+ *
+ */
 public abstract class LeafElement implements NewsElement{
 
 	protected String name;
@@ -12,6 +17,10 @@ public abstract class LeafElement implements NewsElement{
 //	public LeafElement(ParseHelper helper) throws NewsParsingException{
 //		value=parse(helper).toString();
 //	}
+	@Override
+	public void setValue(String value) {
+		this.value=value;
+	}
 	
 	@Override
 	public String getName() {

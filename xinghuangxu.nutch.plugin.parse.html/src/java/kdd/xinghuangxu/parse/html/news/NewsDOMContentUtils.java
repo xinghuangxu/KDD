@@ -6,6 +6,11 @@ import kdd.xinghuangxu.parse.html.dataStruc.Outlink;
 
 import org.w3c.dom.Node;
 
+/**
+ * Extract specific items from a page
+ * @author xinghuang
+ *
+ */
 public interface NewsDOMContentUtils {
 
 	public abstract String getDate(Node node, URL url);
